@@ -1,0 +1,98 @@
+import java.io.*;
+import java.util.*;
+
+class question {
+    private String ques;
+    private String ans;
+
+    public question(String ques, String ans) {
+        this.ques = ques;
+        this.ans = ans;
+    }
+
+    public String getques() {
+        return ques;
+    }
+
+    public String getans() {
+        return ans;
+    }
+};
+
+class quizsystem {
+    ArrayList<question> questions;
+    Scanner scan;
+    int score;
+
+    public quizsystem() {
+        questions = new ArrayList<>();
+        scan = new Scanner(System.in);
+        score = 0;
+    }
+
+    public void addQues(String q, String a) {
+        question q1 = new question(q, a);
+        questions.add(q1);
+    }
+
+    public void loadQues(String filepath) {
+        try (Scanner filescan = new Scanner(new File(filepath))) {
+            try {
+                while (filescan.hasNextLine()) {
+                    String ques = filescan.nextLine();
+                    if (filescan.hasNextLine()) {
+                        String ans = filescan.nextLine();
+                        addQues(ques, ans);
+                    } else {
+                        System.out.println("Missing question");
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("Exception occur");
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        }
+    }
+
+    public void start() {
+        if (questions.isEmpty()) {
+            System.out.println("It is empty");
+            return;
+        }
+        System.out.println("welcome to the quiz");
+        for (int i = 0; i < questions.size(); i++) {
+            question q = questions.get(i);
+            System.out.println("Question " + (i + 1) + ": " + q.getques());
+            System.out.println("Answer: ");
+            String userans = scan.nextLine();
+
+            if (userans.equalsIgnoreCase(q.getans())) {
+                System.out.println("Correct!");
+                score++;
+            } else {
+                System.out.println("Incorrect. The correct answer is: " + q.getans());
+            }
+        }
+
+        System.out.println("Quiz completed. Your score: " + score + " out of " + questions.size());
+    }
+
+    public void run() {
+        System.out.println("Enter the path of file");
+        String filepath = scan.nextLine().trim();
+        loadQues(filepath);
+
+        start();
+        scan.close();
+    }
+
+};
+
+public class Project {
+    public static void main(String[] args) {
+        quizsystem t1 = new quizsystem();
+        t1.run();
+    }
+}
